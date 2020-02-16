@@ -1,5 +1,5 @@
 // src/react-auth0-wrapper.js
-import React, { useState, useEffect, useContext } from "react";
+import React, {useState, useEffect, useContext} from "react";
 import createAuth0Client from "@auth0/auth0-spa-js";
 
 const DEFAULT_REDIRECT_CALLBACK = () =>
@@ -24,7 +24,7 @@ export const Auth0Provider = ({
             setAuth0(auth0FromHook);
 
             if (window.location.search.includes("code=")) {
-                const { appState } = await auth0FromHook.handleRedirectCallback();
+                const {appState} = await auth0FromHook.handleRedirectCallback();
                 onRedirectCallback(appState);
             }
 
@@ -70,25 +70,27 @@ export const Auth0Provider = ({
         setIsAuthenticated(true);
         setUser(user);
     };
-    return (
-        <Auth0Context.Provider
-            value={{
-                isAuthenticated,
-                user,
-                loading,
-                popupOpen,
-                loginWithPopup,
-                handleRedirectCallback,
-                getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),
-                loginWithRedirect: (...p) => auth0Client.loginWithRedirect(...p),
-                getTokenSilently: (...p) => auth0Client.getTokenSilently(...p),
-                getTokenWithPopup: (...p) => auth0Client.getTokenWithPopup(...p),
-                logout: (...p) => auth0Client.logout(...p)
-            }}
-        >
-            {children}
-        </Auth0Context.Provider>
-    );
-
-
+    if (auth0Client === undefined) {
+        return (<div>Loading Auth0 Client...</div>);
+    } else {
+        return (
+            <Auth0Context.Provider
+                value={{
+                    isAuthenticated,
+                    user,
+                    loading,
+                    popupOpen,
+                    loginWithPopup,
+                    handleRedirectCallback,
+                    getIdTokenClaims: (...p) => auth0Client.getIdTokenClaims(...p),
+                    loginWithRedirect: (...p) => auth0Client.loginWithRedirect(...p),
+                    getTokenSilently: (...p) => auth0Client.getTokenSilently(...p),
+                    getTokenWithPopup: (...p) => auth0Client.getTokenWithPopup(...p),
+                    logout: (...p) => auth0Client.logout(...p)
+                }}
+            >
+                {children}
+            </Auth0Context.Provider>
+        );
+    }
 };
