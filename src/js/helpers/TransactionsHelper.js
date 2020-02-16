@@ -5,7 +5,7 @@ export function showAll(SetShowAll, showAll) {
 }
 
 export function updateDatabase(updatedRowData, usertoken, transactionId) {
-    axios.patch('/transactions/patch', {
+    axios.patch(`${process.env.REACT_APP_API_URL}/transactions/patch`, {
         updateData: updatedRowData,
         userToken: usertoken,
         transactionId: transactionId

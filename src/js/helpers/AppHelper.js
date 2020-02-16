@@ -2,7 +2,7 @@ import axios from "axios";
 
 export function createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup) {
     if (allowCreateUserCheck && user) {
-        axios.post('/users/create', {userToken: user.sub});
+        axios.post(`${process.env.REACT_APP_API_URL}/users/create`, {userToken: user.sub});
         SetAllowCreateUserCheck(false);
         SetAllowDateLookup(true)
     }
@@ -10,7 +10,7 @@ export function createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreate
 
 export function getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup) {
     if (allowDateLookup && user) {
-        axios.get('/users', {params: {userToken: user.sub}}).then(u => {
+        axios.get(`${process.env.REACT_APP_API_URL}/users`, {params: {userToken: user.sub}}).then(u => {
             let d = [...data];
             let date = u.data.last_viewed;
             if (date === null || date === undefined) {
@@ -30,7 +30,7 @@ export function getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData
 
 export function getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup) {
     if (allowBudgetLookup && user) {
-        axios.get('/budgets', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
+        axios.get(`${process.env.REACT_APP_API_URL}/budgets`, {params: {userToken: user.sub, date: data[2].selectedDate}}).then(b => {
             let d = [...data];
             d[0].budgetData = b.data.budgetData;
             SetAllowBudgetLookup(false);
@@ -46,7 +46,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
     if (allowTransactionLookup && user) {
         //TODO Remove this if/else buxfer stuff when plaid gets their act together and starts working with cap one.
         if (user.buxfer !== undefined) {
-            axios.get('/buxfer', {params: {userid: user.buxfer.userid, password: user.buxfer.password, userToken: user.sub, date: data[2].selectedDate}}).then(t => {
+            axios.get(`${process.env.REACT_APP_API_URL}/buxfer`, {params: {userid: user.buxfer.userid, password: user.buxfer.password, userToken: user.sub, date: data[2].selectedDate}}).then(t => {
                 let d = [...data];
                 d[1].transactionData = t.data.transactions;
                 SetAllowTransactionLookup(false);
@@ -54,10 +54,10 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
             })}
         else
             {
-                axios.get('/transactions', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
+                axios.get(`${process.env.REACT_APP_API_URL}/transactions`, {params: {userToken: user.sub, date: data[2].selectedDate}}).then(t => {
                     if (t.data.message === "ITEM_LOGIN_REQUIRED" && (token === undefined || token === "")) {
                         if (user) {
-                            axios.get('/users/get_public_token', {params: {userToken: user.sub}}).then(t => {
+                            axios.get(`${process.env.REACT_APP_API_URL}/users/get_public_token`, {params: {userToken: user.sub}}).then(t => {
                                 SetToken(t.data);
                                 SetOpenDialog(true);
                             });
@@ -92,7 +92,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
 
     export function getCategories(allowCategoryLookup, user, data, SetAllowCategoryLookup, SetCategories, SetAllowTransactionLookup) {
         if (allowCategoryLookup && user) {
-            axios.get('/categories', {params: {userToken: user.sub, date: data[2].selectedDate}}).then(category => {
+            axios.get(`${process.env.REACT_APP_API_URL}/categories`, {params: {userToken: user.sub, date: data[2].selectedDate}}).then(category => {
                 let categories = category.data.map(c => c.category);
                 SetAllowCategoryLookup(false);
                 SetCategories(categories);
@@ -113,7 +113,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {
+        axios.patch(`${process.env.REACT_APP_API_URL}/transactions/patch`, {
             updateData: row,
             userToken: user.sub,
             transactionId: transactionId,
@@ -130,7 +130,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
             }
         });
         SetData(d);
-        axios.patch('/transactions/patch', {
+        axios.patch(`${process.env.REACT_APP_API_URL}/transactions/patch`, {
             updateData: updatedRowData,
             userToken: user.sub,
             date: data[2].selectedDate
@@ -142,7 +142,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
         let month = date.getMonth() + 1;
         let d = [...data];
         d[2].selectedDate = `${year}/${month}/${1}`;
-        axios.patch('/users/update_date', {
+        axios.patch(`${process.env.REACT_APP_API_URL}/users/update_date`, {
             userToken: user.sub,
             date: d[2].selectedDate
         });
@@ -208,7 +208,7 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
     }
 
     export function deleteCategory(oldData, data, categories, SetCategories, SetData) {
-        axios.delete('/categories/delete', {params: {id: oldData.id}});
+        axios.delete(`${process.env.REACT_APP_API_URL}/categories/delete`, {params: {id: oldData.id}});
 
         let d = [...data];
 
@@ -235,13 +235,13 @@ export function getTransactionData(allowTransactionLookup, user, data, token, Se
 
     export function accountLink(token, user, SetAllowTransactionLookup) {
         if (user) {
-            axios.post('/users/set_plaid_token', {userToken: user.sub, plaidToken: token});
+            axios.post(`${process.env.REACT_APP_API_URL}/users/set_plaid_token`, {userToken: user.sub, plaidToken: token});
         }
         SetAllowTransactionLookup(true);
     }
 
     export function update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories) {
-        axios.patch('/categories/patch', {
+        axios.patch(`${process.env.REACT_APP_API_URL}/categories/patch`, {
             id: updatedRowData.id,
             category: updatedRowData.category,
             budgeted: updatedRowData.budget

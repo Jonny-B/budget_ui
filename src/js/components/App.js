@@ -128,7 +128,7 @@ export default function App(props) {
     };
 
     const copyBudget = (month) => {
-        axios.patch('/budgets/copy', {
+        axios.patch(`${process.env.REACT_APP_API_URL}/budgets/copy`, {
             month: month,
             userToken: user.sub,
             date: data[2].selectedDate

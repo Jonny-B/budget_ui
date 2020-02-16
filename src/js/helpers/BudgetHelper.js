@@ -28,7 +28,7 @@ export function edit(SetOpen, SetRowData, rowData) {
 
 export function add(category, type, handleAddCategory, userToken, date) {
     if (category.budget === null || category.budget === undefined || category.budget === 'NaN') category.budget = 0;
-    axios.post('/budgets/create', {
+    axios.post(`${process.env.REACT_APP_API_URL}/budgets/create`, {
         budgeted: category.budget,
         type: type,
         userToken: userToken,
