@@ -143,7 +143,7 @@ export default function App(props) {
                 <Grid container spacing={3} className="App">
                     <Grid item xs={12}> <NavBar isAuthenticated={isAuthenticated} loginWithRedirect={loginWithRedirect}
                                                 logout={logout} user={user}/> </Grid>
-                    <Grid item xs={6}> <Typography> Budget Easy </Typography> </Grid>
+                    <Grid item xs={6}> <Typography variant="h1"> Budget Easy </Typography> </Grid>
                     <Grid item xs={3}> <Button variant={"contained"}><ShowChart/></Button> </Grid>
                     <div>
                         <Typography>Copy Other Month Budget</Typography>
