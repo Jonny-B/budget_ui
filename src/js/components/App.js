@@ -153,7 +153,7 @@ export default function App(props) {
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
                             clientName="Budget"
-                            env="development"
+                            env="sandbox"
                             product={["transactions"]}
                             publicKey="d010207ffa5ab886eea1b7f31471f3"
                             onExit={handleOnExit}
