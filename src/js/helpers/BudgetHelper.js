@@ -6,9 +6,9 @@ export function seeTotals(props) {
     let eTotal = 0;
     let sTotal = 0;
 
-    if (props.data.incomeData.length > 0) iTotal = props.data.incomeData.map(i => parseFloat(i.actual)).reduce((total, num) => total + num, 0).toFixed(2);
-    if (props.data.expensesData.length > 0) eTotal = props.data.expensesData.map(e => parseFloat(e.actual)).reduce((total, num) => total + num, 0).toFixed(2);
-    if (props.data.savingsData.length > 0) sTotal = props.data.savingsData.map(s => parseFloat(s.actual)).reduce((total, num) => total + num, 0).toFixed(2)
+    if (props.data.incomeData.length > 0) iTotal =  parseFloat(props.data.incomeData.map(i => parseFloat(i.actual)).reduce((total, num) => total + num, 0).toFixed(2));
+    if (props.data.expensesData.length > 0) eTotal = parseFloat(props.data.expensesData.map(e => parseFloat(e.actual)).reduce((total, num) => total + num, 0).toFixed(2));
+    if (props.data.savingsData.length > 0) sTotal = parseFloat(props.data.savingsData.map(s => parseFloat(s.actual)).reduce((total, num) => total + num, 0).toFixed(2));
 
     // Set transfer to savings to iTotal out of if statement in case there is no Savings Data.
     let transferToSavings = iTotal;
