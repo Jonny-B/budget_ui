@@ -21,17 +21,17 @@ export default function Budget(props) {
         BudgetHelper.edit(SetOpen, SetRowData, rowData)
     };
 
-    const handleAdd = (category, type) => {
-        BudgetHelper.add(category, type, props.handleAddCategory, props.userToken, props.date)
-    };
+const handleAdd = (category, type) => {
+    BudgetHelper.add(category, type, props.handleAddCategory, props.userToken, props.date)
+};
 
-    const handleUpdate = (updatedRowData) => {
-        BudgetHelper.update(SetOpen, props.handleUpdate, updatedRowData)
-    };
+const handleUpdate = (updatedRowData) => {
+    BudgetHelper.update(SetOpen, props.handleUpdate, updatedRowData)
+};
 
-    const handleClose = () => {
-        BudgetHelper.close(SetOpen)
-    };
+const handleClose = () => {
+    BudgetHelper.close(SetOpen)
+};
 
     return (
         <div>
@@ -180,8 +180,18 @@ export default function Budget(props) {
                                 editComponent: () => (<></>)
                             },
                             {
+                                title: 'Distribute Excess',
+                                field: 'distributed',
+                                type: 'currency',
+                                render: (rowData) => (
+                                    <input type="numeric" value={rowData.value} onBlur={
+                                        e =>
+                                            props.handleDistChange(e.target.value, rowData)
+                                    }/>)
+                            },
+                            {
                                 title: 'Total in Savings Bucket',
-                                field: 'bucketTotal',
+                                field: 'distributedTotal',
                                 type: 'currency',
                                 editComponent: () => (<></>)
                             }
@@ -240,4 +250,4 @@ export default function Budget(props) {
     )
 }
 
-const theme = createMuiTheme ({});
+const theme = createMuiTheme({});

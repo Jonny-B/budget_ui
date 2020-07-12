@@ -9,7 +9,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import PlaidLink from 'react-plaid-link'
 import NavBar from "./NavBar";
 import {useAuth0} from "../../react-auth0-wrapper";
-import * as AppHepler from '../helpers/AppHelper'
+import * as AppHelper from '../helpers/AppHelper'
 import axios from "axios/index";
 
 // TODO look and feel sucks.
@@ -61,70 +61,71 @@ export default function App(props) {
     });
 
     const handleCreateUserIfNecessary = () => {
-        AppHepler.createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup)
+        AppHelper.createUserIfNecessary(allowCreateUserCheck, user, SetAllowCreateUserCheck, SetAllowDateLookup)
     };
 
     const handleGetDate = () => {
-        AppHepler.getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup)
+        AppHelper.getDate(allowDateLookup, user, data, SetAllowDateLookup, SetData, SetAllowBudgetLookup)
     };
 
     const handleGetBudgetData = () => {
-        AppHepler.getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup);
+        AppHelper.getBudgetData(allowBudgetLookup, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup);
     };
 
     const handleGetTransactionData = () => {
-        AppHepler.getTransactionData(allowTransactionLookup, user, data, token, SetToken, SetOpenDialog, SetAllowTransactionLookup, SetData)
+        AppHelper.getTransactionData(allowTransactionLookup, user, data, token, SetToken, SetOpenDialog, SetAllowTransactionLookup, SetData)
     };
 
     const handleGetCategories = () => {
-        AppHepler.getCategories(allowCategoryLookup, user, data, SetAllowCategoryLookup, SetCategories, SetAllowTransactionLookup)
+        AppHelper.getCategories(allowCategoryLookup, user, data, SetAllowCategoryLookup, SetCategories, SetAllowTransactionLookup)
     };
 
     const handleDropdownChange = (transactionId, event, previousCategory) => {
-        AppHepler.dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user)
+        AppHelper.dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user)
     };
 
     const handleHideRow = (updatedRowData) => {
-        AppHepler.hideRow(updatedRowData, data, SetData, user)
+        AppHelper.hideRow(updatedRowData, data, SetData, user)
     };
 
     const handleDateChange = (date) => {
-        AppHepler.dateChange(date, data, user, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
+        AppHelper.dateChange(date, data, user, SetData, SetAllowTransactionLookup, SetAllowBudgetLookup)
     };
 
     const handleUpdateCategory = (transaction, previousCategory) => {
-        AppHepler.updateCategory(transaction, previousCategory, data, SetData)
+        AppHelper.updateCategory(transaction, previousCategory, data, SetData)
     };
 
     const handleAddCategory = (category, budget, type, id) => {
-        AppHepler.addCategory(data, category, budget, type, id, handleUpdateCategories, SetData)
+        AppHelper.addCategory(data, category, budget, type, id, handleUpdateCategories, SetData)
     };
 
     const handleUpdateCategories = (newCategory) => {
-        AppHepler.updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup)
+        AppHelper.updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup)
     };
 
     const handleDeleteCategory = oldData => {
-        AppHepler.deleteCategory(oldData, data, categories, SetCategories, SetData)
-    };
-
-    const handleOpenClosePlaid = () => {
-        // this.setState({plaidModalOpen: !this.state.plaidModalOpen})
+        AppHelper.deleteCategory(oldData, data, categories, SetCategories, SetData)
     };
 
     const handleVerifyAccount = () => {
-        AppHepler.verifyAccount(SetOpenDialog, SetAllowTransactionLookup)
+        AppHelper.verifyAccount(SetOpenDialog, SetAllowTransactionLookup)
     };
 
     const handleAccountLink = (token) => {
-        AppHepler.accountLink(token, user, SetAllowTransactionLookup);
+        AppHelper.accountLink(token, user, SetAllowTransactionLookup);
     };
 
     const handleOnExit = () => {
     };
 
     const handleUpdate = (updatedRowData) => {
-        AppHepler.update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories)
+        AppHelper.update(updatedRowData, data, SetAllowTransactionLookup, SetData, categories, SetCategories)
+    };
+
+// Called when updating the distribution column. Called on blur.
+    const handleDistChange = (updatedDistValue, savingsData) => {
+        AppHelper.updateSavingsBucket(updatedDistValue, savingsData)
     };
 
     const copyBudget = (month) => {
@@ -147,8 +148,10 @@ export default function App(props) {
                     <Grid item xs={3}> <Button variant={"contained"}><ShowChart/></Button> </Grid>
                     <div>
                         <Typography>Copy Other Month Budget</Typography>
-                        <Grid item xs={3}> <Button onClick={() => copyBudget("last")} variant={"contained"}>Last</Button> </Grid>
-                        <Grid item xs={3}> <Button onClick={() => copyBudget("next")} variant={"contained"}>Next</Button> </Grid>
+                        <Grid item xs={3}> <Button onClick={() => copyBudget("last")}
+                                                   variant={"contained"}>Last</Button> </Grid>
+                        <Grid item xs={3}> <Button onClick={() => copyBudget("next")}
+                                                   variant={"contained"}>Next</Button> </Grid>
                     </div>
                     <Grid item xs={3}>
                         {isAuthenticated && <PlaidLink
@@ -181,6 +184,7 @@ export default function App(props) {
                                     handleUpdate={handleUpdate}
                                     handleDeleteCategory={handleDeleteCategory}
                                     handleAddCategory={handleAddCategory}
+                                    handleDistChange={handleDistChange}
                                 /> :
                                 <Typography>
                                     Loading ...
@@ -207,7 +211,8 @@ export default function App(props) {
                 </Grid>
                 <Dialog open={openDialog}>
                     <DialogTitle id="verify-dialog">Verify Linked Account</DialogTitle>
-                    <Typography>Your Financial Institution would like you to verify you credentials. Click below to Verify.</Typography>
+                    <Typography>Your Financial Institution would like you to verify you credentials. Click below to
+                        Verify.</Typography>
                     {openDialog && <PlaidLink
                         clientName="Budget"
                         env="sandbox"
