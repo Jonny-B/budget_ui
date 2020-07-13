@@ -21,17 +21,17 @@ export default function Budget(props) {
         BudgetHelper.edit(SetOpen, SetRowData, rowData)
     };
 
-const handleAdd = (category, type) => {
-    BudgetHelper.add(category, type, props.handleAddCategory, props.userToken, props.date)
-};
+    const handleAdd = (category, type) => {
+        BudgetHelper.add(category, type, props.handleAddCategory, props.userToken, props.date)
+    };
 
-const handleUpdate = (updatedRowData) => {
-    BudgetHelper.update(SetOpen, props.handleUpdate, updatedRowData)
-};
+    const handleUpdate = (updatedRowData) => {
+        BudgetHelper.update(SetOpen, props.handleUpdate, updatedRowData)
+    };
 
-const handleClose = () => {
-    BudgetHelper.close(SetOpen)
-};
+    const handleClose = () => {
+        BudgetHelper.close(SetOpen)
+    };
 
     return (
         <div>
@@ -184,14 +184,13 @@ const handleClose = () => {
                                 field: 'distributed',
                                 type: 'currency',
                                 render: (rowData) => (
-                                    <input type="numeric" value={rowData.value} onBlur={
-                                        e =>
-                                            props.handleDistChange(e.target.value, rowData)
+                                    <input type="numeric" value={rowData.value} placeholder={rowData.bucket.distributed} onBlur={
+                                        input => props.handleDistChange(input.target.value, rowData)
                                     }/>)
                             },
                             {
                                 title: 'Total in Savings Bucket',
-                                field: 'distributedTotal',
+                                field: 'bucket.distributed_total',
                                 type: 'currency',
                                 editComponent: () => (<></>)
                             }
@@ -212,7 +211,7 @@ const handleClose = () => {
                                 new Promise((resolve) => {
                                     setTimeout(() => {
                                         {
-                                            const data = props.data.savingsData;
+                                            const data = props.data.savingData;
                                             handleAdd(newData, "saving");
                                             // setState({data}, () => resolve());
                                         }
@@ -223,7 +222,7 @@ const handleClose = () => {
                                 new Promise((resolve) => {
                                     setTimeout(() => {
                                         {
-                                            let data = props.data.savingsData;
+                                            let data = props.data.savingData;
                                             const index = data.indexOf(oldData);
                                             data.splice(index, 1);
                                             props.handleDeleteCategory(oldData);
@@ -233,7 +232,7 @@ const handleClose = () => {
                                     }, 1000);
                                 })
                         }}
-                        data={props.data.savingsData}/>
+                        data={props.data.savingData}/>
                 </Grid>
                 <Grid item>
                     <Typography>Savings Total: ${handleSetTotals().savingsTotal}</Typography>

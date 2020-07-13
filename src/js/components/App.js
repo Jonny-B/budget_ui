@@ -39,7 +39,7 @@ export default function App(props) {
                 {
                     incomeData: [],
                     expensesData: [],
-                    savingsData: []
+                    savingData: []
                 }
 
         },
@@ -80,8 +80,8 @@ export default function App(props) {
         AppHelper.getCategories(allowCategoryLookup, user, data, SetAllowCategoryLookup, SetCategories, SetAllowTransactionLookup)
     };
 
-    const handleDropdownChange = (transactionId, event, previousCategory) => {
-        AppHelper.dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user)
+    const handleDropdownChange = (transactionId, event, previousCategory, child) => {
+        AppHelper.dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user, child)
     };
 
     const handleHideRow = (updatedRowData) => {
@@ -124,8 +124,9 @@ export default function App(props) {
     };
 
 // Called when updating the distribution column. Called on blur.
-    const handleDistChange = (updatedDistValue, savingsData) => {
-        AppHelper.updateSavingsBucket(updatedDistValue, savingsData)
+    const handleDistChange = (updatedDistValue, savingData) => {
+        AppHelper.updateSavingsBucket(updatedDistValue, savingData.id, savingData.bucket.total, savingData.bucket.date);
+        AppHelper.getBudgetData(true, user, data, SetAllowBudgetLookup, SetData, SetAllowCategoryLookup);
     };
 
     const copyBudget = (month) => {
@@ -176,7 +177,7 @@ export default function App(props) {
                     </Grid>
                     <Grid item xs={6}>
                         {
-                            (data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingsData.length !== 0) ?
+                            (data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingData.length !== 0) ?
                                 <Budget
                                     date={data[2].selectedDate}
                                     data={data[0].budgetData}

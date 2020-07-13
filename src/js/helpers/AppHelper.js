@@ -114,7 +114,7 @@ export function getCategories(allowCategoryLookup, user, data, SetAllowCategoryL
                 date: data[2].selectedDate
             }
         }).then(category => {
-            let categories = category.data.map(c => c.category);
+            let categories = category.data;
             SetAllowCategoryLookup(false);
             SetCategories(categories);
             SetAllowTransactionLookup(true)
@@ -124,12 +124,18 @@ export function getCategories(allowCategoryLookup, user, data, SetAllowCategoryL
     }
 }
 
-export function dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user) {
+export function dropdownChange(transactionId, event, previousCategory, data, SetData, handleUpdateCategory, user, child) {
     let d = [...data];
     let row = [];
+    let selectedCategory = child.key.split("_");
+    let categoryId = selectedCategory[0];
+    let categoryName = selectedCategory[1];
+    let categoryType = selectedCategory[2];
+    let date = data[2].selectedDate;
+
     d[1].transactionData.forEach((r) => {
         if (r.id === transactionId) {
-            r.assignCategory = event.target.value;
+            r.assignCategory = categoryName;
             row = r;
         }
     });
@@ -138,9 +144,12 @@ export function dropdownChange(transactionId, event, previousCategory, data, Set
         updateData: row,
         userToken: user.sub,
         transactionId: transactionId,
-        date: data[2].selectedDate
+        date: date
     });
-    handleUpdateCategory(row, previousCategory)
+    handleUpdateCategory(row, previousCategory);
+
+    // Call update Savings bucket and set the new total
+    if(categoryType === 'saving') updateSavingsBucket(null, categoryId, date , transactionId);
 }
 
 export function hideRow(updatedRowData, data, SetData, user) {
@@ -178,7 +187,7 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
     // Add to new category
     let incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === transaction.assignCategory);
     let expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === transaction.assignCategory);
-    let savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === transaction.assignCategory);
+    let savingsIndex = d[0].budgetData.savingData.findIndex(s => s.category === transaction.assignCategory);
     let actual;
     if (incomeIndex !== -1) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
@@ -189,15 +198,15 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
         d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
     } else if (savingsIndex !== -1) {
-        actual = d[0].budgetData.savingsData[savingsIndex].actual;
+        actual = d[0].budgetData.savingData[savingsIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-        d[0].budgetData.savingsData[savingsIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
-        d[0].budgetData.savingsData[savingsIndex].bucketTotal = d[0].budgetData.savingsData[savingsIndex].bucketTotal - transaction.charge;
+        d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
+        d[0].budgetData.savingData[savingsIndex].bucketTotal = d[0].budgetData.savingData[savingsIndex].bucketTotal - transaction.charge;
     }
     // Subtract from old category
     incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);
     expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === previousCategory);
-    savingsIndex = d[0].budgetData.savingsData.findIndex(s => s.category === previousCategory);
+    savingsIndex = d[0].budgetData.savingData.findIndex(s => s.category === previousCategory);
     if (incomeIndex !== -1) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
         d[0].budgetData.incomeData[incomeIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
@@ -205,8 +214,8 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
         actual = d[0].budgetData.expensesData[expensesIndex].actual;
         d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
     } else if (savingsIndex !== -1) {
-        actual = d[0].budgetData.savingsData[savingsIndex].actual;
-        d[0].budgetData.savingsData[savingsIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
+        actual = d[0].budgetData.savingData[savingsIndex].actual;
+        d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
     }
     SetData(d)
 }
@@ -295,10 +304,12 @@ export function update(updatedRowData, data, SetAllowTransactionLookup, SetData,
 }
 
 // Called when updating the distribution column. Called on blur.
-export function updateSavingsBucket(updatedDistValue, savingsData) {
+// Also called when a transaction is assigned to a category.
+export function updateSavingsBucket(updatedDistValue, id, date, transactionId = null) {
     axios.patch(`${process.env.REACT_APP_API_URL}/buckets/patch`, {
-        categoryId: savingsData.id,
+        categoryId: id,
         updatedDistValue: updatedDistValue,
-        bucketData: savingsData.bucket
+        date: date,
+        transactionId: transactionId
     });
 }
