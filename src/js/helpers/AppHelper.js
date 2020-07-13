@@ -225,15 +225,17 @@ export function addCategory(data, category, budget, type, id, updateCategories, 
     // TODO go around and fix this so you aren't using plural sometimes and not others. Doing this here will make the app very britle.
     if (type === 'expense') type = 'expenses';
     d[0].budgetData[`${type}Data`].push({category: category, budget: budget, actual: 0, type: type, id: id});
-    updateCategories(category.category);
+    updateCategories(category);
     SetData(d);
 }
 
-export function updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup) {
-    let cats = [...categories];
-    cats.push(newCategory);
-    SetCategories(cats);
-    SetAllowCategoryLookup(true)
+export function updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup, SetAllowBudgetLookup) {
+    // let cats = [...categories];
+    // cats.push(newCategory);
+    // SetCategories(cats);
+    SetAllowBudgetLookup(true);
+    SetAllowCategoryLookup(true);
+
 }
 
 export function deleteCategory(oldData, data, categories, SetCategories, SetData) {

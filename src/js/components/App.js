@@ -97,11 +97,13 @@ export default function App(props) {
     };
 
     const handleAddCategory = (category, budget, type, id) => {
-        AppHelper.addCategory(data, category, budget, type, id, handleUpdateCategories, SetData)
+        AppHelper.addCategory(data, category, budget, type, id, handleUpdateCategories, SetData);
+        AppHelper.getTransactionData(true, user, data, token, SetToken, SetOpenDialog, SetAllowTransactionLookup, SetData);
+
     };
 
     const handleUpdateCategories = (newCategory) => {
-        AppHelper.updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup)
+        AppHelper.updateCategories(categories, newCategory, SetCategories, SetAllowCategoryLookup, SetAllowBudgetLookup)
     };
 
     const handleDeleteCategory = oldData => {

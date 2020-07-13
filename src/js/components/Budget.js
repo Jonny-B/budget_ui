@@ -184,7 +184,7 @@ export default function Budget(props) {
                                 field: 'distributed',
                                 type: 'currency',
                                 render: (rowData) => (
-                                    <input type="numeric" value={rowData.value} placeholder={rowData.bucket.distributed} onBlur={
+                                    <input type="numeric" value={rowData.value} placeholder={rowData.bucket === undefined ? 0 : rowData.bucket.distributed} onBlur={
                                         input => props.handleDistChange(input.target.value, rowData)
                                     }/>)
                             },
