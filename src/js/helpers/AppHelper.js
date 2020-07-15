@@ -200,8 +200,12 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
     } else if (savingsIndex !== -1) {
         actual = d[0].budgetData.savingData[savingsIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
+        let distributed_total = d[0].budgetData.savingData[savingsIndex].bucket.distributed_total;
+        distributed_total = (distributed_total === "NaN" || distributed_total === undefined) ? 0 : distributed_total;
+
         d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
-        d[0].budgetData.savingData[savingsIndex].bucketTotal = d[0].budgetData.savingData[savingsIndex].bucketTotal - transaction.charge;
+        d[0].budgetData.savingData[savingsIndex].bucket.distributed_total = parseFloat(distributed_total) - parseFloat(transaction.charge);
+        updateSavingsBucket(null, d[0].budgetData.savingData[savingsIndex].id, data.selectedDate);
     }
     // Subtract from old category
     incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);
@@ -215,7 +219,10 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
         d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
     } else if (savingsIndex !== -1) {
         actual = d[0].budgetData.savingData[savingsIndex].actual;
+        let distributed_total = d[0].budgetData.savingData[savingsIndex].bucket.distributed_total;
         d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
+        d[0].budgetData.savingData[savingsIndex].bucket.distributed_total = (parseFloat(distributed_total) + parseFloat(transaction.charge)).toString();
+        updateSavingsBucket(null, d[0].budgetData.savingData[savingsIndex].id, data.selectedDate);
     }
     SetData(d)
 }
@@ -307,11 +314,10 @@ export function update(updatedRowData, data, SetAllowTransactionLookup, SetData,
 
 // Called when updating the distribution column. Called on blur.
 // Also called when a transaction is assigned to a category.
-export function updateSavingsBucket(updatedDistValue, id, date, transactionId = null) {
+export function updateSavingsBucket(updatedDistValue, id, date) {
     axios.patch(`${process.env.REACT_APP_API_URL}/buckets/patch`, {
         categoryId: id,
         updatedDistValue: updatedDistValue,
         date: date,
-        transactionId: transactionId
     });
 }
