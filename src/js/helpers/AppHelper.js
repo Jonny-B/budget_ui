@@ -149,7 +149,7 @@ export function dropdownChange(transactionId, event, previousCategory, data, Set
     handleUpdateCategory(row, previousCategory);
 
     // Call update Savings bucket and set the new total
-    if(categoryType === 'saving') updateSavingsBucket(null, categoryId, date , transactionId);
+    if (categoryType === 'saving') updateSavingsBucket(null, categoryId, date, transactionId);
 }
 
 export function hideRow(updatedRowData, data, SetData, user) {
@@ -186,43 +186,43 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
 
     // Add to new category
     let incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === transaction.assignCategory);
-    let expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === transaction.assignCategory);
-    let savingsIndex = d[0].budgetData.savingData.findIndex(s => s.category === transaction.assignCategory);
+    let expenseIndex = d[0].budgetData.expenseData.findIndex(e => e.category === transaction.assignCategory);
+    let savingIndex = d[0].budgetData.savingData.findIndex(s => s.category === transaction.assignCategory);
     let actual;
     if (incomeIndex !== -1) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
         d[0].budgetData.incomeData[incomeIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
-    } else if (expensesIndex !== -1) {
-        actual = d[0].budgetData.expensesData[expensesIndex].actual;
+    } else if (expenseIndex !== -1) {
+        actual = d[0].budgetData.expenseData[expenseIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-        d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
-    } else if (savingsIndex !== -1) {
-        actual = d[0].budgetData.savingData[savingsIndex].actual;
+        d[0].budgetData.expenseData[expenseIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
+    } else if (savingIndex !== -1) {
+        actual = d[0].budgetData.savingData[savingIndex].actual;
         actual = (actual === "NaN" || actual === undefined) ? 0 : actual;
-        let distributed_total = d[0].budgetData.savingData[savingsIndex].bucket.distributed_total;
+        let distributed_total = d[0].budgetData.savingData[savingIndex].bucket.distributed_total;
         distributed_total = (distributed_total === "NaN" || distributed_total === undefined) ? 0 : distributed_total;
 
-        d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
-        d[0].budgetData.savingData[savingsIndex].bucket.distributed_total = parseFloat(distributed_total) - parseFloat(transaction.charge);
-        updateSavingsBucket(null, d[0].budgetData.savingData[savingsIndex].id, data.selectedDate);
+        d[0].budgetData.savingData[savingIndex].actual = (parseFloat(actual) + parseFloat(transaction.charge)).toString();
+        d[0].budgetData.savingData[savingIndex].bucket.distributed_total = parseFloat(distributed_total) - parseFloat(transaction.charge);
+        updateSavingsBucket(null, d[0].budgetData.savingData[savingIndex].id, data.selectedDate);
     }
     // Subtract from old category
     incomeIndex = d[0].budgetData.incomeData.findIndex(i => i.category === previousCategory);
-    expensesIndex = d[0].budgetData.expensesData.findIndex(e => e.category === previousCategory);
-    savingsIndex = d[0].budgetData.savingData.findIndex(s => s.category === previousCategory);
+    expenseIndex = d[0].budgetData.expenseData.findIndex(e => e.category === previousCategory);
+    savingIndex = d[0].budgetData.savingData.findIndex(s => s.category === previousCategory);
     if (incomeIndex !== -1) {
         actual = d[0].budgetData.incomeData[incomeIndex].actual;
         d[0].budgetData.incomeData[incomeIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
-    } else if (expensesIndex !== -1) {
-        actual = d[0].budgetData.expensesData[expensesIndex].actual;
-        d[0].budgetData.expensesData[expensesIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
-    } else if (savingsIndex !== -1) {
-        actual = d[0].budgetData.savingData[savingsIndex].actual;
-        let distributed_total = d[0].budgetData.savingData[savingsIndex].bucket.distributed_total;
-        d[0].budgetData.savingData[savingsIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
-        d[0].budgetData.savingData[savingsIndex].bucket.distributed_total = (parseFloat(distributed_total) + parseFloat(transaction.charge)).toString();
-        updateSavingsBucket(null, d[0].budgetData.savingData[savingsIndex].id, data.selectedDate);
+    } else if (expenseIndex !== -1) {
+        actual = d[0].budgetData.expenseData[expenseIndex].actual;
+        d[0].budgetData.expenseData[expenseIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
+    } else if (savingIndex !== -1) {
+        actual = d[0].budgetData.savingData[savingIndex].actual;
+        let distributed_total = d[0].budgetData.savingData[savingIndex].bucket.distributed_total;
+        d[0].budgetData.savingData[savingIndex].actual = (parseFloat(actual) - parseFloat(transaction.charge)).toString();
+        d[0].budgetData.savingData[savingIndex].bucket.distributed_total = (parseFloat(distributed_total) + parseFloat(transaction.charge)).toString();
+        updateSavingsBucket(null, d[0].budgetData.savingData[savingIndex].id, data.selectedDate);
     }
     SetData(d)
 }
@@ -230,7 +230,6 @@ export function updateCategory(transaction, previousCategory, data, SetData) {
 export function addCategory(data, category, budget, type, id, updateCategories, SetData) {
     let d = [...data];
     // TODO go around and fix this so you aren't using plural sometimes and not others. Doing this here will make the app very britle.
-    if (type === 'expense') type = 'expenses';
     d[0].budgetData[`${type}Data`].push({category: category, budget: budget, actual: 0, type: type, id: id});
     updateCategories(category);
     SetData(d);

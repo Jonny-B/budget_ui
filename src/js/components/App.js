@@ -38,7 +38,7 @@ export default function App(props) {
             budgetData:
                 {
                     incomeData: [],
-                    expensesData: [],
+                    expenseData: [],
                     savingData: []
                 }
 
@@ -179,7 +179,7 @@ export default function App(props) {
                     </Grid>
                     <Grid item xs={6}>
                         {
-                            (data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expensesData.length !== 0 || data[0].budgetData.savingData.length !== 0) ?
+                            (data[0].budgetData.incomeData.length !== 0 || data[0].budgetData.expenseData.length !== 0 || data[0].budgetData.savingData.length !== 0) ?
                                 <Budget
                                     date={data[2].selectedDate}
                                     data={data[0].budgetData}
@@ -188,6 +188,7 @@ export default function App(props) {
                                     handleDeleteCategory={handleDeleteCategory}
                                     handleAddCategory={handleAddCategory}
                                     handleDistChange={handleDistChange}
+                                    handleGetCagetories={handleGetCategories}
                                 /> :
                                 <Typography>
                                     Loading ...

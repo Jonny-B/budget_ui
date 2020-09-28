@@ -4,7 +4,6 @@ import {Grid, Dialog, DialogTitle, Typography} from '@material-ui/core'
 import {Create} from "@material-ui/icons";
 import {createMuiTheme, withStyles} from '@material-ui/core/styles';
 import EditCard from "./EditCard";
-import axios from "axios";
 import * as BudgetHelper from "../helpers/BudgetHelper"
 
 export default function Budget(props) {
@@ -40,6 +39,7 @@ export default function Budget(props) {
                     <MaterialTable
                         title={"Income"}
                         options={{search: false, paging: false}}
+                        data={props.data.incomeData}
                         columns={[
                             {title: 'Category', field: 'category'},
                             {
@@ -93,7 +93,7 @@ export default function Budget(props) {
                                     }, 1000);
                                 })
                         }}
-                        data={props.data.incomeData}/>
+                    />
                 </Grid>
                 <Grid item>
                     <Typography>Income Total: ${handleSetTotals().incomeTotal}</Typography>
@@ -102,6 +102,7 @@ export default function Budget(props) {
                     <MaterialTable
                         title={"Expenses"}
                         options={{search: false, paging: false}}
+                        data={props.data.expenseData}
                         columns={[
                             {title: 'Category', field: 'category'},
                             {
@@ -125,7 +126,7 @@ export default function Budget(props) {
                                 },
                                 tooltip: 'Edit Transaction',
                                 onClick: (event, rowData) => {
-                                    handleEdit("expenses", rowData, event)
+                                    handleEdit("expense", rowData, event)
                                 }
                             }
                         ]}
@@ -134,7 +135,7 @@ export default function Budget(props) {
                                 new Promise((resolve) => {
                                     setTimeout(() => {
                                         {
-                                            const data = props.data.expensesData;
+                                            const data = props.data.expenseData;
                                             handleAdd(newData, "expense");
                                             // setState({data}, () => resolve());
                                         }
@@ -145,7 +146,7 @@ export default function Budget(props) {
                                 new Promise((resolve) => {
                                     setTimeout(() => {
                                         {
-                                            let data = props.data.expensesData;
+                                            let data = props.data.expenseData;
                                             const index = data.indexOf(oldData);
                                             data.splice(index, 1);
                                             props.handleDeleteCategory(oldData);
@@ -155,7 +156,7 @@ export default function Budget(props) {
                                     }, 1000);
                                 })
                         }}
-                        data={props.data.expensesData}/>
+                    />
                 </Grid>
                 <Grid item>
                     <Typography>Expenses Total: ${handleSetTotals().expensesTotal}</Typography>
@@ -164,6 +165,7 @@ export default function Budget(props) {
                     <MaterialTable
                         title={"Savings"}
                         options={{search: false, paging: false}}
+                        data={props.data.savingData}
                         columns={[
                             {title: 'Category', field: 'category'},
                             {
@@ -184,9 +186,11 @@ export default function Budget(props) {
                                 field: 'distributed',
                                 type: 'currency',
                                 render: (rowData) => (
-                                    <input type="numeric" value={rowData.value} placeholder={rowData.bucket === undefined ? 0 : rowData.bucket.distributed} onBlur={
-                                        input => props.handleDistChange(input.target.value, rowData)
-                                    }/>)
+                                    <input type="numeric" value={rowData.value}
+                                           placeholder={rowData.bucket === undefined ? 0 : rowData.bucket.distributed}
+                                           onBlur={
+                                               input => props.handleDistChange(input.target.value === "" ? rowData.bucket.distributed : input.target.value, rowData)
+                                           }/>)
                             },
                             {
                                 title: 'Total in Savings Bucket',
@@ -232,7 +236,7 @@ export default function Budget(props) {
                                     }, 1000);
                                 })
                         }}
-                        data={props.data.savingData}/>
+                    />
                 </Grid>
                 <Grid item>
                     <Typography>Savings Total: ${handleSetTotals().savingsTotal}</Typography>
